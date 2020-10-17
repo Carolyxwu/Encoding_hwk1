@@ -3,6 +3,7 @@
 %解码对应random_bits_with_crc和decoded_bits_with_crc
 %load('sim_10-Oct-2020 00_56_54_#6.mat')
 setup_mapper;
+setup_encoder;
 %SNR_arr = [0, 0.5, 1, 1.5, 2, 2.5, 3, 4, 5, 6, 7, 8, 9, 10, 12.5, 15, 17.5];   % target SNR.
 %SNRs_abs = 10.^(SNR_arr/10);
 %sigma_arr = sqrt(Ps./SNRs_abs);
@@ -18,11 +19,11 @@ error_map_decoded=zeros(length(SNR_arr),length(random_bits_with_crc));
 for sigma_iter = 1:N_sigmas 
     sigma = sigma_arr(sigma_iter);
     soft_decode = false;
-    ch=CSI{sigma_iter}(select_sim, :);
+    ch_temp=CSI{sigma_iter}(select_sim, :);
     encoded_bits_matrix(sigma_iter,:) = bit_demapping(SYMS_TRANSMIT{sigma_iter}(select_sim, :), length(encoded_bits), mapping_conf, ch, [], sigma);
     pred_bits_matrix(sigma_iter,:) = bit_demapping(SYMS_RECEIVE{sigma_iter}(select_sim, :), length(encoded_bits), mapping_conf, ch, [], sigma);
-    random_bits_with_crc_matrix(sigma_iter,:) = fast_conv_decode(encoded_bits_matrix(:,sigma_iter), conv_encoder_conf, soft_decode);
-    decoded_bits_with_crc_matrix(sigma_iter,:) = fast_conv_decode(pred_bits_matrix(:,sigma_iter), conv_encoder_conf, soft_decode);
+    random_bits_with_crc_matrix(sigma_iter,:) = fast_conv_decode(encoded_bits_matrix(sigma_iter,:), conv_encoder_conf, soft_decode);
+    decoded_bits_with_crc_matrix(sigma_iter,:) = fast_conv_decode(pred_bits_matrix(sigma_iter,:), conv_encoder_conf, soft_decode);
     error_map_demapping(sigma_iter,:)=bitxor(encoded_bits_matrix(sigma_iter,:),pred_bits_matrix(sigma_iter,:));
     error_map_decoded(sigma_iter,:)=bitxor(random_bits_with_crc_matrix(sigma_iter,:),decoded_bits_with_crc_matrix(sigma_iter,:));
 end

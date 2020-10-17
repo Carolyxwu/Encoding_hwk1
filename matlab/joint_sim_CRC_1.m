@@ -1,13 +1,14 @@
-setup_mapper;
-setup_encoder;
+setup_mapper_1;
+setup_encoder_1;
 
 %% Simulation parameters.
-N_sim = 1000;
+N_sim = 1;
 N_info_bits = 4096;
 SNR_arr = [0, 0.5, 1, 1.5, 2, 2.5, 3, 4, 5, 6, 7, 8, 9, 10, 12.5, 15, 17.5];   % target SNR.
 Ps = 1;
 
-
+error_map_demapping=zeros(length(SNR_arr),9862);
+error_map_decoded=zeros(length(SNR_arr),4928);
 %% Start simulation.
 SNRs_abs = 10.^(SNR_arr/10);
 sigma_arr = sqrt(Ps./SNRs_abs);
@@ -32,7 +33,7 @@ SYMS_TRANSMIT = cell(N_sigmas, 1);
 SYMS_RECEIVE = cell(N_sigmas, 1);
 
 tic;
-parfor sigma_iter = 1:N_sigmas
+for sigma_iter = 1:N_sigmas
     sigma = sigma_arr(sigma_iter);
     
     for sim_iter = 1:N_sim
@@ -68,6 +69,10 @@ parfor sigma_iter = 1:N_sigmas
         %% Decode.
         decoded_bits_with_crc = fast_conv_decode(pred_bits, conv_encoder_conf, soft_decode);
         decoded_validation = deCRC(decoded_bits_with_crc);
+        
+        %%
+        error_map_demapping(sigma_iter,:)=bitxor(encoded_bits,pred_bits);
+        error_map_decoded(sigma_iter,:)=bitxor(random_bits_with_crc,decoded_bits_with_crc);       
         
         %% Find all the errors.       
         err_bit_cnt_after_coding(sigma_iter) = err_bit_cnt_after_coding(sigma_iter) + ...
@@ -127,4 +132,15 @@ disp(['Time elapsed: ', num2str(time_elapsed), 's for ', num2str(N_sigmas*N_sim)
 disp(['b=', num2str(ch_conf.b), ', rho=',num2str(ch_conf.rho)]);
 
 %% Save variables into files.
-save(['data/sim_', strrep(datestr(datetime), ':', '_'), '.mat']);
+%save(['data/sim_', strrep(datestr(datetime), ':', '_'), '.mat']);
+
+%»­³öÎóÂëÍ¼°¸
+% for idx = 1:N_sigmas
+%     figure;
+%     plot(error_map_demapping(idx,:));
+%     title('error_map_demapping(b=0.3 rho=0.9 '+string(SNR_arr(idx))+'dB)');
+%     figure;
+%     plot(error_map_decoded(idx,:));
+%     title('error_map_decoded(b=0.3 rho=0.9 '+string(SNR_arr(idx))+'dB)');
+% end 
+%save('err_map.mat','error_map_demapping','error_map_decoded');
