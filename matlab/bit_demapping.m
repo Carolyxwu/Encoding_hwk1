@@ -7,6 +7,7 @@ function bit_stream=bit_demapping(syms, L, mapping_conf, ch, ch_conf, sigma)
     alg = mapping_conf.alg;         % Channel Equalization algorithm.
     output_mode = mapping_conf.out; 
     est_method= mapping_conf.est;
+
     % Assume PSK.
     Amp = abs(mapping_vector(1));
     SNR = 20*log10(Amp/sigma);
@@ -31,6 +32,7 @@ function bit_stream=bit_demapping(syms, L, mapping_conf, ch, ch_conf, sigma)
                 est_ch(k) = syms(k);
             end
         end
+        
         % using linear interp to estimate channels.
         if strcmp(est_method, 'linear')
             est_ch = linear_interp(est_ch, pilot_flag);
@@ -39,16 +41,19 @@ function bit_stream=bit_demapping(syms, L, mapping_conf, ch, ch_conf, sigma)
         else
             est_ch = est_kalman(est_ch, pilot_flag, pilot_rate, ch_conf.rho, ch_conf.b, sigma);
         end
+
         if strcmp(alg, 'zf')
             est_syms = syms ./ est_ch;
         elseif strcmp(alg, 'mse')
             snr = 10^(SNR/10);
             est_syms=syms .* conj(est_ch)./(est_ch.*conj(est_ch)+1/snr);
         end
+        
         % remove pilots.
         est_syms = est_syms(~pilot_flag);
         syms = syms(~pilot_flag);
     end
+    
     %% deinterleave
     interleave=mapping_conf.interleave;
     depth=mapping_conf.depth;

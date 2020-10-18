@@ -1,9 +1,10 @@
-clear all;
+clear;
+
 setup_mapper;
 setup_encoder;
 
 %% Simulation parameters.
-N_sim = 1000;%1000
+N_sim = 1000;
 N_info_bits = 4096;
 SNR_arr = [0, 0.5, 1, 1.5, 2, 2.5, 3, 4, 5, 6, 7, 8, 9, 10, 12.5, 15, 17.5];   % target SNR.
 Ps = 1;
@@ -31,7 +32,7 @@ SYMS_TRANSMIT = cell(N_sigmas, 1);
 SYMS_RECEIVE = cell(N_sigmas, 1);
 
 tic;
-for sigma_iter = 1:N_sigmas   %parfor
+parfor sigma_iter = 1:N_sigmas
     sigma = sigma_arr(sigma_iter);
     
     for sim_iter = 1:N_sim
@@ -142,12 +143,14 @@ plot(SNR_arr,err_box_cnt_crc_hard.');
 if soft_decode
     plot(SNR_arr,err_box_cnt_crc_soft.');
 end
+
 if soft_decode
     legend('BLER_ conv_ hard', 'BLER_ conv_ soft');
 else
     legend('BLER_ conv_ hard');
 end
 title('BLER-SNR Curve');
+
 ylabel('BLER');
 xlabel('SNR_(_d_B_)');
 grid on;
@@ -176,6 +179,6 @@ grid on;
 
 disp(['Time elapsed: ', num2str(time_elapsed), 's for ', num2str(N_sigmas*N_sim), ' channel simulations']);
 disp(['b=', num2str(ch_conf.b), ', rho=',num2str(ch_conf.rho)]);
+
 %% Save variables into files.
-%save(['data/sim_', strrep(datestr(datetime), ':', '_'), '.mat']);
-save(['sim_', strrep(datestr(datetime), ':', '_'), '.mat']);
+save(['data/sim_', strrep(datestr(datetime), ':', '_'), '.mat']);
