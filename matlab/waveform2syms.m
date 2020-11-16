@@ -17,8 +17,8 @@ function [recv_syms] = waveform2syms(transmit_signal,n0,N_syms,waveform_conf)
     len_signal=length(transmit_signal);
     recv_syms=zeros(N_syms,1);
     noises = sigma * randn(size(transmit_signal));
-    recv_signal_baseband = (2*transmit_signal).*exp(-1j*2*pi*((0:len_signal-1).')*fc/fs);
-    recv_noise_baseband = (2*noises).*exp(-1j*2*pi*((0:len_signal-1).')*fc/fs);
+    recv_signal_baseband = (2*transmit_signal).*exp(-1j*2*pi*((0:len_signal-1))*fc/fs);
+    recv_noise_baseband = (2*noises).*exp(-1j*2*pi*((0:len_signal-1))*fc/fs);
     recv_signal_after_MF = filter(g_arr, [1], recv_signal_baseband);                                 % g_arr filter is an LPF.
     recv_noise_after_MF = filter(g_arr, [1], recv_noise_baseband);
     

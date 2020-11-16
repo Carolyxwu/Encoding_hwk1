@@ -14,7 +14,7 @@ function [transmit_signal] = syms2waveform(syms,waveform_conf)
     
     N_syms = length(syms);
     len_signal = N_syms * oversample_rate + 2*Group_delay;
-    transmit_delta_sequence = zeros(len_signal, 1);    
+    transmit_delta_sequence = zeros(len_signal,1);    
     syms_I = real(syms); %Ë«¼«ÐÔ+1¡¢-1
     syms_Q = imag(syms);
     
@@ -36,5 +36,6 @@ function [transmit_signal] = syms2waveform(syms,waveform_conf)
     % channel parameters.
 
     transmit_signal = real(transmit_signal_baseband .* exp(1j*2*pi*((0:len_signal-1).')*fc/fs));    % upconvert.    
+    transmit_signal=transmit_signal.';
 end
 
