@@ -1,8 +1,8 @@
-function [recv_syms] = waveform2syms(transmit_signal,noises,N_syms,waveform_conf)
+function [recv_syms] = waveform2syms(transmit_signal,n0,N_syms,waveform_conf)
 %Summary of this function goes here
 %载波波形转电平符号的一次实现
 %输入：transmit_signal         载波波形           
-%      noises                  信道噪声 
+%      n0                      噪声n0 
 %      N_syms                  复电平符号个数
 %      waveform_conf           波形参数
 %输出：recv_syms               接收端复电平符号序列
@@ -11,12 +11,12 @@ function [recv_syms] = waveform2syms(transmit_signal,noises,N_syms,waveform_conf
     oversample_rate = waveform_conf.oversample_rate;
     fs = waveform_conf.fs;     % sample rate
     fc = waveform_conf.fc;      % carrier freq = 1850Hz    
-    Group_delay=waveform_conf.Group_delay;
+    %Group_delay=waveform_conf.Group_delay;
     g_arr=waveform_conf.g_arr;
-    
+    sigma=sqrt(n0/2);
     len_signal=length(transmit_signal);
     recv_syms=zeros(N_syms,1);
-    
+    noises = sigma * randn(size(transmit_signal));
     recv_signal_baseband = (2*transmit_signal).*exp(-1j*2*pi*((0:len_signal-1).')*fc/fs);
     recv_noise_baseband = (2*noises).*exp(-1j*2*pi*((0:len_signal-1).')*fc/fs);
     recv_signal_after_MF = filter(g_arr, [1], recv_signal_baseband);                                 % g_arr filter is an LPF.

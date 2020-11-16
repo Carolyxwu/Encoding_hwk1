@@ -6,7 +6,7 @@ setup_wave;
 N_syms = 10;
 N_sim = 1;
 
-sigma = 0.1;
+n0 = 2*0.1*0.1;
 len_signal = N_syms * waveform_conf.oversample_rate + 2*waveform_conf.Group_delay;
 
 for sim_iter = 1:N_sim
@@ -14,8 +14,8 @@ for sim_iter = 1:N_sim
     syms_Q = 1-2*(rand([N_syms, 1])>0.5);
     syms=syms_I+j*syms_Q;
     [transmit_signal] = syms2waveform(syms,waveform_conf);
-    noises = sigma * randn(size(transmit_signal));
-    [recv_syms] = waveform2syms(transmit_signal,noises,N_syms,waveform_conf);
+    
+    [recv_syms] = waveform2syms(transmit_signal,n0,N_syms,waveform_conf);
 
 
 end
