@@ -3,8 +3,8 @@ load('data/rcf.mat');
 
 disp_flag = false;
 %% Generate complex symbols with energy 1.
-N_syms = 10;
-N_sim = 100;
+N_syms = 100;
+N_sim = 1000;
 
 oversample_rate = 8;
 fs = 16000;     % sample rate
@@ -55,12 +55,13 @@ for sim_iter = 1:N_sim
     recv_noise_after_MF = filter(g_arr, [1], recv_noise_baseband);
     
     if disp_flag
-       
+
         stem(real(recv_signal_after_MF));
         hold on;
         stem(real(recv_signal_after_MF + recv_noise_after_MF));
         legend('recv BB', 'recv BB with noise');
     end
+    
     disp(['Energy_syms=', num2str(sum(abs(transmit_delta_sequence).^2))]);
     disp(['Energy_transmitted_signal=', num2str(sum(abs(transmit_signal).^2))]);
     disp(['channel Es/n0(dB) = ', num2str(0.5*db(0.5/(2*sigma^2)))]);
@@ -77,12 +78,14 @@ end
 
 %% Analyze RF signal spectrum.
 % Spectrum estimation.
-L_spec = length(transmit_signal_RF{1});
-psd = zeros(L_spec,1);      % Calculate power spectrum density estimator.
-
-for sim_iter = 1:N_sim
-    psd = psd + abs(fft(transmit_signal_RF{sim_iter})).^2;
+addpath('utils');
+% construct matrix.
+sample_len = length(transmit_signal_RF{1});
+RF_observation_matrix = zeros(N_sim, sample_len);
+for k = 1:N_sim
+    RF_observation_matrix(k,:) = (transmit_signal_RF{k}).';
 end
-psd = fftshift(psd / N_sim);
-figure;
-plot(psd);
+
+
+psd_est(RF_observation_matrix, oversample_rate * N_syms, fs, true);
+
