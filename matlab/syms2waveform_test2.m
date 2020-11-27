@@ -10,13 +10,13 @@ n0 = 2*0.1*0.1;
 len_signal = N_syms * waveform_conf.oversample_rate + 2*waveform_conf.Group_delay;
 
 for sim_iter = 1:N_sim
-    syms_I = 1-2*(rand([N_syms, 1])>0.5);
-    syms_Q = 1-2*(rand([N_syms, 1])>0.5);
+    syms_I = (1-2*(rand([N_syms, 1])>0.5))/sqrt(2);
+    syms_Q = (1-2*(rand([N_syms, 1])>0.5))/sqrt(2);
 
     syms=syms_I.'+1j * syms_Q.';
-    [transmit_signal] = syms2waveform(syms,waveform_conf);
+    [transmit_signal] = syms2waveform(syms,waveform_conf,true);
 
-    [recv_syms] = waveform2syms(transmit_signal,n0,N_syms,waveform_conf);
+    [recv_syms] = waveform2syms(transmit_signal,n0,N_syms,waveform_conf,true);
 
 
 end

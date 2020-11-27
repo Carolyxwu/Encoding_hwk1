@@ -13,7 +13,7 @@ function [transmit_signal] = syms2waveform(syms, waveform_conf, disp_flag)
     end
      
     oversample_rate = waveform_conf.oversample_rate;
-    fs = waveform_conf.fs;      % sample rate
+    fs = waveform_conf.fs;      % sample rate 16000Hz
 
     fc = waveform_conf.fc;      % carrier freq = 1850Hz    
     Group_delay=waveform_conf.Group_delay;
@@ -36,8 +36,10 @@ function [transmit_signal] = syms2waveform(syms, waveform_conf, disp_flag)
         stem(n_arr, real(transmit_delta_sequence));
         hold on;
         stem(n_arr, real(transmit_signal_baseband));
-        title('(Re) delta sequence && x_B_B_,_I(t)');
+        title('(Re) delta sequence && x_B_B_,_I(n)');
         legend('transmit delta', 'transmit baseband');
+        xlabel('n');
+        ylabel('Amplitude');
 
     end
     % up-convert.

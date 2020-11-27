@@ -22,6 +22,7 @@ plot(omega_arr, G_arr);
 set(gca, 'xtick', -pi:pi/2:pi);
 set(gca,'XTickLabel',{'-\pi', '-\pi/2','0', '\pi/2', '\pi'});
 title('|G(e^j^\omega)|^2');
+xlabel('\omega(rad)');
 
 %% Perform IDTFT, adding window.
 % Formula: 1/(2*pi)??sqrt(G(??))d??
@@ -45,7 +46,9 @@ g_arr = g_arr / sqrt(sum(g_arr.^2));    % Energy normalization.
 disp(sum(g_arr.^2));
 figure(2);
 plot((-N_gSample:1:N_gSample).', g_arr);
-title('g[n]');
+title('g_a_r_r[n]');
+xlabel('n');
+set(gca,'XLim',[-32,32]);
 % figure(3);
 % freqz(g_arr,[1]);
 
