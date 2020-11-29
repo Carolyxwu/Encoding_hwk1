@@ -1,4 +1,4 @@
-encrypter.enable = true;
+encrypter.enable = false;
 encrypter.method = 'DES';
 if strcmp(encrypter.method, 'DES')
     encrypter.key = keygen();
